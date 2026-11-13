@@ -2,7 +2,7 @@
 
 **GST Invoice Buddy** is a planned SaaS invoicing and customer-management platform for Indian freelancers, professionals, shops, and small businesses. The goal is to make everyday billing easier while supporting Indian GST workflows, INR pricing, UPI payments, and a multilingual experience.
 
-> **Project status:** Early-stage starter / foundation. This repository is not yet a complete, build-validated or production-ready application. The existing Wasp starter references application source files that are not currently present in the repository. Payment processing, PDF generation, GST compliance automation and production deployment must not be considered implemented.
+> **Project status:** The repository now includes a responsive React + TypeScript frontend with a public marketing landing page and an interactive invoice workspace. Supabase Auth, business, customer and draft-invoice flows are wired in the frontend, but a successful build/CI run and live staging deployment still need verification. Razorpay, Resend, PDF generation, statutory e-invoicing and production GST compliance are not implemented.
 
 ## Product vision
 
@@ -78,6 +78,28 @@ Planned Resend integration for invoice delivery, payment receipts, status notifi
 - Multi-user memberships and role-based permissions for Business.
 - Usage, invoice, collection and revenue analytics.
 - Audit history for sensitive business actions.
+
+## Frontend application
+
+A separate Vite + React + TypeScript application is available in [frontend/](frontend/). It includes:
+- Public marketing landing page and proposed pricing.
+- Responsive business dashboard, invoices, customers, payments-status and settings screens.
+- Supabase Auth magic-link sign-in.
+- Business workspace creation, customer creation and draft invoice creation against the existing Supabase tables.
+- Clearly labelled local demo mode when Supabase environment variables are absent.
+- GitHub Actions build workflow at `.github/workflows/frontend-ci.yml`.
+
+Run it locally:
+
+```bash
+cd frontend
+cp .env.example .env
+# Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY (publishable/anon key only)
+npm install
+npm run dev
+```
+
+The frontend is a separate app from the incomplete Wasp template under `template/app`; the two authentication/runtime stacks have not been merged. Do not deploy the Wasp template as if it were this frontend.
 
 ## Technology direction
 
