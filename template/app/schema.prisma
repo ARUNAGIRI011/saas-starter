@@ -1,6 +1,7 @@
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 generator client {
@@ -16,8 +17,8 @@ model User {
   isAdmin                   Boolean         @default(false)
 
   paymentProcessorUserId    String?         @unique
-  subscriptionStatus        String?         // 'active', 'trialing', 'past_due', 'paused', 'canceled'
-  subscriptionPlan          String?         // 'hobby', 'pro'
+  subscriptionStatus        String?
+  subscriptionPlan          String?
   currentPeriodEnd          DateTime?
   cancelAtPeriodEnd         Boolean         @default(false)
   datePaid                  DateTime?
@@ -32,29 +33,24 @@ model User {
 model ProcessedWebhookEvent {
   id                        String          @id @default(uuid())
   createdAt                 DateTime        @default(now())
-
-  paymentProcessorEventId   String          @unique // The payment processor's event id, e.g. `evt_...` for Stripe.
-  eventType                 String                  // The payment processor's event type, e.g. `invoice.paid`.
+  paymentProcessorEventId   String          @unique
+  eventType                 String
 }
 
 model GptResponse {
   id                        String          @id @default(uuid())
   createdAt                 DateTime        @default(now())
   updatedAt                 DateTime        @updatedAt
-
   user                      User            @relation(fields: [userId], references: [id])
   userId                    String
-
   content                   String
 }
 
 model Task {
   id                        String          @id @default(uuid())
   createdAt                 DateTime        @default(now())
-
   user                      User            @relation(fields: [userId], references: [id])
   userId                    String
-
   description               String
   time                      String          @default("1")
   isDone                    Boolean         @default(false)
@@ -63,10 +59,8 @@ model Task {
 model File {
   id                        String          @id @default(uuid())
   createdAt                 DateTime        @default(now())
-
   user                      User            @relation(fields: [userId], references: [id])
   userId                    String
-
   name                      String
   type                      String
   s3Key                     String
@@ -75,7 +69,6 @@ model File {
 model DailyStats {
   id                               Int             @id @default(autoincrement())
   date                             DateTime        @default(now()) @unique
-
   totalViews                       Int             @default(0)
   prevDayViewsChangePercent        String          @default("0")
   userCount                        Int             @default(0)
@@ -84,7 +77,6 @@ model DailyStats {
   paidUserDelta                    Int             @default(0)
   totalRevenue                     Float           @default(0)
   totalProfit                      Float           @default(0)
-
   sources                          PageViewSource[]
 }
 
@@ -92,17 +84,14 @@ model PageViewSource {
   @@id([date, name])
   name                     String
   date                     DateTime        @default(now())
-
   dailyStats               DailyStats?     @relation(fields: [dailyStatsId], references: [id])
   dailyStatsId             Int?
-
   visitors                 Int
 }
 
 model Logs {
   id                       Int             @id @default(autoincrement())
   createdAt                DateTime        @default(now())
-
   message                  String
   level                    String
 }
@@ -110,10 +99,8 @@ model Logs {
 model ContactFormMessage {
   id                        String          @id @default(uuid())
   createdAt                 DateTime        @default(now())
-
   user                      User            @relation(fields: [userId], references: [id])
   userId                    String
-
   content                   String
   isRead                    Boolean         @default(false)
   repliedAt                 DateTime?
